@@ -17,3 +17,27 @@ module "bootstrap" {
   billing_account = var.billing_account
   enabled_apis    = var.enabled_apis
 }
+
+module "terraform_sa" {
+  source       = "../../modules/service_account"
+  project_id   = local.project_id
+  account_id   = var.terraform_sa_account_id
+  display_name = var.terraform_sa_display_name
+  roles        = var.terraform_sa_roles
+}
+
+module "github_sa" {
+  source       = "../../modules/service_account"
+  project_id   = local.project_id
+  account_id   = var.github_sa_account_id
+  display_name = var.github_sa_display_name
+  roles        = var.github_sa_roles
+}
+
+module "runtime_cloud_run_service_sa" {
+  source       = "../../modules/service_account"
+  project_id   = local.project_id
+  account_id   = var.runtime_cloud_run_service_sa_account_id
+  display_name = var.runtime_cloud_run_service_sa_display_name
+  roles        = var.runtime_cloud_run_service_sa_roles
+}

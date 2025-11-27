@@ -39,3 +39,60 @@ variable "enabled_apis" {
   type        = list(string)
   default     = []
 }
+
+# Terraform service account module variables
+variable "terraform_sa_roles" {
+  description = "List of IAM roles to grant to the Terraform service account."
+  type        = list(string)
+  default     = []
+}
+
+variable "terraform_sa_account_id" {
+  description = "Service account ID for the Terraform service account."
+  type        = string
+  default     = "terraform"
+}
+
+variable "terraform_sa_display_name" {
+  description = "Display name for the Terraform service account."
+  type        = string
+  default     = "Terraform Service Account"
+}
+
+# Github Actions service account module variables
+variable "github_sa_roles" {
+  description = "List of IAM roles to grant to the Github Actions service account."
+  type        = list(string)
+  default     = []
+}
+
+variable "github_sa_account_id" {
+  description = "Service account ID for the GitHub Actions service account."
+  type        = string
+  default     = "github-actions"
+}
+
+variable "github_sa_display_name" {
+  description = "Display name for the GitHub Actions service account."
+  type        = string
+  default     = "GitHub Actions Service Account"
+}
+
+# Runtime Cloud Run service account module variables
+variable "runtime_cloud_run_service_sa_roles" {
+  description = "List of IAM roles to grant to the Runtime Microservices service account."
+  type        = list(string)
+  default     = []
+}
+
+variable "runtime_cloud_run_service_sa_account_id" {
+  description = "Service account ID for the runtime Cloud Run services."
+  type        = string
+  default     = "runtime-cloud-run-service"
+}
+
+variable "runtime_cloud_run_service_sa_display_name" {
+  description = "Display name for the runtime Cloud Run services account."
+  type        = string
+  default     = "Runtime Cloud Run Service Account"
+}

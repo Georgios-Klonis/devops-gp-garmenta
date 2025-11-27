@@ -1,10 +1,10 @@
 terraform {
   required_version = ">= 1.5.0"
 
-#   backend "gcs" {
-#     bucket = ""
-#     prefix = "state/app"
-#   }
+  backend "gcs" {
+    bucket = "devops-garmenta-prod-001-tfstate-bucket"
+    prefix = "state/app"
+  }
 
   required_providers {
     google = {

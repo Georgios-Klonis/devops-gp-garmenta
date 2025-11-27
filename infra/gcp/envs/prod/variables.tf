@@ -96,3 +96,9 @@ variable "runtime_cloud_run_service_sa_display_name" {
   type        = string
   default     = "Runtime Cloud Run Service Account"
 }
+
+# Terraform state bucket variables
+variable "tfstate_bucket_location" {
+  description = "Region/Location for the Terraform state bucket (e.g. europe-west1)."
+  type        = string
+}

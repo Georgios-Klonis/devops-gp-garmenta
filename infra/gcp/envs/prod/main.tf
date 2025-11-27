@@ -41,3 +41,15 @@ module "runtime_cloud_run_service_sa" {
   display_name = var.runtime_cloud_run_service_sa_display_name
   roles        = var.runtime_cloud_run_service_sa_roles
 }
+
+module "tfstate_bucket" {
+  source = "../../modules/bucket"
+
+  project_id           = local.project_id
+  bucket_name          = local.tfstate_bucket_name
+  location             = var.tfstate_bucket_location
+  versioning_enabled   = true
+  object_admin_members = [module.terraform_sa.service_account_email]
+
+  depends_on = [module.bootstrap]
+}

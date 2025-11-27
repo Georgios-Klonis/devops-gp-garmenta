@@ -26,3 +26,19 @@ output "runtime_cloud_run_service_service_account_email" {
   description = "Email of the Runtime Cloud Run service account."
   value       = module.runtime_cloud_run_service_sa.service_account_email
 }
+
+# Terraform state bucket outputs
+output "tfstate_bucket_name" {
+  description = "Name of the Terraform state bucket."
+  value       = module.tfstate_bucket.bucket_name
+}
+
+output "tfstate_bucket_url" {
+  description = "URL of the Terraform state bucket."
+  value       = module.tfstate_bucket.bucket_url
+}
+
+output "tfstate_bucket_self_link" {
+  description = "Self link of the Terraform state bucket."
+  value       = module.tfstate_bucket.bucket_self_link
+}

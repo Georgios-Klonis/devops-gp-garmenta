@@ -3,8 +3,8 @@ environment    = "prod"
 project_suffix = "001"
 
 # GCP provider configuration
-# credentials_file = "./.secrets/terraform-sa.json"
-credentials_file = ""
+credentials_file = "./.secrets/terraform-sa.json"
+# credentials_file = ""
 
 # Optional hierarchy overrides
 org_id          = null
@@ -76,3 +76,6 @@ runtime_cloud_run_service_sa_roles = [
   "roles/firebaseauth.admin",            # mint custom auth tokens / manage users
   "roles/iam.serviceAccountTokenCreator" # impersonate other service accounts - used for pubsub push subscriptions
 ]
+
+# Terraform state bucket variables
+tfstate_bucket_location = "europe-west1"

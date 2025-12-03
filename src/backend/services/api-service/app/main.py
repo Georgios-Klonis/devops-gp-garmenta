@@ -32,8 +32,9 @@ async def health_check():
 # Root endpoint
 @app.get("/")
 async def root():
-    return {"message": "Project Service is running"}
+    return {"message": "Api Service is running"}
 
+# Error Handler
 @app.exception_handler(APIError)
 async def api_error_handler(request: Request, exc: APIError):
     """Return JSON response based on APIError.* sub-classes."""

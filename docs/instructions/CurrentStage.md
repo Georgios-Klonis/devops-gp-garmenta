@@ -1,20 +1,29 @@
 # CurrentStage: TicketWise
 
 ## Implementation Snapshot
-- No application code has been implemented yet; the repository contains documentation scaffolding only.
-- Control documents (Base, DesignPlan, CodingStandards, CurrentStage, PlanAlignment, Concerns) are initialized to guide development.
+- FastAPI service scaffolded with versioned router, global error handler, CORS policy, and health/root endpoints.
+- Domain schemas cover events, listings, prices, search requests/responses, provider health snapshots, user profiles, and favorites.
+- Application layer includes in-memory and HTTP provider stubs behind a composite repository, TTL cache stub, SearchService wiring, and dependency helpers with configuration via pydantic settings.
+- Mongo-ready repositories exist for search cache and user profiles/favorites (feature-flagged); HS256 JWT validation path added alongside the demo token.
+- Logging configured centrally; root `requirements.txt` now installs service dependencies from project root. Control documents remain the source of truth for scope and standards.
 
 ## Implemented Features
-- None. Search, provider aggregation, LLM workflows, authentication, favorites, pricing, and admin endpoints remain unbuilt.
+- `/health` and `/` endpoints confirm service availability.
+- `/v1/search` endpoint returns normalized sample events from an in-memory provider with basic filtering and caching.
+- `/v1/providers/status` exposes stub provider health response.
+- `/v1/profile/me` uses a demo bearer token to return/create a stubbed profile.
+- JWT validation available when configured via environment (HS256 path).
+- APIError handler returns structured JSON errors for future domain exceptions.
 
 ## Architecture Status
-- Target architecture (FastAPI modular monolith with MongoDB, PydanticAI, Azure infrastructure) is defined conceptually but not executed in code.
-- No project scaffolding (modules, packages, CI definitions) exists; these need to be created during Milestone M1.
+- Layering introduced (API router → service → repository) but remains in-memory only; no persistence or provider integrations yet.
+- No infrastructure automation or deployment manifests exist; Dockerfile and requirements are stub-level.
 
 ## Testing & Quality
-- No tests or tooling are present. CI, linting, and coverage gates must be set up.
+- No automated tests or CI pipelines yet; linting/type-check steps are still to be configured.
 
 ## Current Limitations
-- Users cannot interact with any API endpoints; there is no deployment pipeline or infrastructure configuration.
-- Provider integrations, caching, observability, and personalization features are all pending implementation.
-- Risk mitigation strategies (rate limiting, LLM guardrails) exist only on paper.
+- Search data is static and in-memory; no production provider connectors or LLM workflows.
+- Auth is stub/JWT-only; no external IdP wiring yet.
+- Observability, rate limiting, error budgets, and production-grade CORS/security settings are not configured.
+- Risk mitigation strategies (rate limiting, LLM guardrails) remain unimplemented.

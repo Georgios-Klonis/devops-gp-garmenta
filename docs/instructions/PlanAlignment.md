@@ -12,19 +12,22 @@
 - LLM-backed `/v1/getTicketGames` endpoint added (via TicketFinderService with vendor list support and settings-driven OpenAI key/model).
 - Scrum Master (Sprint 1): Georgios.
 - Added route/service tests for ticket finder and Mongo DI selection; search/profile tests retained.
+- GitHub Actions workflow builds the FastAPI backend image from `src/backend/services/api-service`, pushes `latest` and `${GITHUB_SHA}` tags to `tickaiacr.azurecr.io`, and deploys the container to the `tickai-app` Azure Web App.
+- Deployment job now configures the Web App to pull commit-tagged images from ACR, injects Cosmos DB (`tickai-db`) connection settings (`TW_MONGODB_URI/DB_NAME`), toggles Mongo-backed repositories, and disables stub data in the hosted environment.
 
 ## Planned vs. Remaining Scope
 - **Search & Aggregation:** `/v1/search` remains in-memory; real provider connectors, normalization/deduplication/pricing, and guarded LLM parsing are still pending. `/v1/getTicketGames` now uses a service layer and env-configured OpenAI key but still relies on LLM prompting instead of provider integrations.
-- **User & Favorites:** Authentication provider (JWT/IdP), persistent profile/favorites storage, and personalization logic remain unimplemented; demo token only.
+- **User & Favorites:** Authentication provider (JWT/IdP) and personalization logic remain unimplemented; demo token only, though Cosmos-backed repositories are now wired via env vars.
 - **Observability & Ops:** Structured telemetry, Application Insights wiring, and provider monitoring are pending beyond the basic health endpoint.
-- **Performance & Reliability:** Real caching, circuit breakers, rate limiting, and graceful degradation are TBD.
-- **CI/CD & Tooling:** Dockerfile/requirements exist but pipelines, lint/test tooling, and automation have not been created.
+- **Performance & Reliability:** Real caching, circuit breakers, rate limiting, and graceful degradation are TBD; Cosmos indexes/backups and Key Vault-backed secrets are still pending.
+- **CI/CD & Tooling:** Backend pipeline now builds/pushes to ACR and deploys to App Service, but still lacks lint/test gates, artifact reuse for other services, and environment promotion controls.
 - **LLM workflow:** Ticket finder still LLM+web-search only; lacks provider-backed enrichment and guardrails (rate limiting/retries/observability).
 - **Layering/Repos:** Plan to consolidate LLM prompt/orchestration into a single layer (services or endpoints, not both) and fully standardize on Mongo-backed repositories as the primary store.
 
 ## Upcoming Technical Tasks
 1. Harden FastAPI project structure with config management, dependency injection, and logging/telemetry hooks.
-2. Stand up CI/CD (linting, formatting, mypy, unit tests, container build/push) and Dockerfile for Azure App Service.
+2. Extend CI/CD to run lint/format/type checks, publish test results, and gate deployments before promoting containers built/pushed to ACR.
+3. Move Cosmos/App Service secrets to Key Vault + managed identity instead of GitHub secrets; add collection/index provisioning scripts.
 3. Implement NL query parsing workflow with PydanticAI and deterministic validation.
 4. Build first provider connector (official API) plus normalization/deduplication pipeline backed by MongoDB.
 5. Extend `/search` with caching, best-price computation, and health/admin checks.

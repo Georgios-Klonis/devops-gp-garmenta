@@ -99,6 +99,40 @@ class SearchResponse(BaseModel):
         return cls(results=events, total=len(events))
 
 
+class GetTicketGamesSchema(BaseModel):
+    """Request schema matching get_game_tickets inputs."""
+
+    team_1: str = Field(..., min_length=2, max_length=128)
+    team_2: Optional[str] = Field(default=None, max_length=128)
+    date_from: Optional[str] = None
+    date_to: Optional[str] = None
+    price_from: Optional[str] = None
+    price_to: Optional[str] = None
+    preferred_vendors: Optional[List[str]] = None
+
+    @field_validator("team_1", "team_2", "date_from", "date_to", "price_from", "price_to")
+    @classmethod
+    def strip_optional(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+        normalized = value.strip()
+        return normalized or None
+
+    @field_validator("preferred_vendors")
+    @classmethod
+    def normalize_vendors(cls, value: Optional[List[str]]) -> Optional[List[str]]:
+        if value is None:
+            return None
+        cleaned = [v.strip() for v in value if v and v.strip()]
+        return cleaned or None
+
+    @model_validator(mode="after")
+    def ensure_team_1(self) -> "GetTicketGamesSchema":
+        if not self.team_1:
+            raise ValueError("team_1 is required")
+        return self
+
+
 class ProviderHealth(str, Enum):
     HEALTHY = "healthy"
     DEGRADED = "degraded"

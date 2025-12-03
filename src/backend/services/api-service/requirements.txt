@@ -9,3 +9,4 @@ python-jose>=3.3.0
 motor>=3.3.2
 pydantic
 uvicorn
+openai>=1.52.0

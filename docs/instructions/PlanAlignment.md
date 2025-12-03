@@ -7,15 +7,20 @@
 - Added provider health endpoint `/v1/providers/status`, central configuration (pydantic settings), dependency wiring, provider aggregation (in-memory + optional HTTP stub), and baseline logging setup.
 - Auth stub with `/v1/profile/me`, user/favorites schemas, and in-memory profile repository.
 - Pricing helper marks best-price listings per event.
-- Root-level `requirements.txt` points to service dependencies for simpler installs.
+- Root-level `requirements.txt` points to service dependencies for simpler installs; API service requirements now pin `openai>=1.52.0`.
 - Mongo-ready repositories for search cache and profiles/favorites (feature-flagged), plus optional HS256 JWT validation path.
+- LLM-backed `/v1/getTicketGames` endpoint added (via TicketFinderService with vendor list support and settings-driven OpenAI key/model).
+- Scrum Master (Sprint 1): Georgios.
+- Added route/service tests for ticket finder and Mongo DI selection; search/profile tests retained.
 
 ## Planned vs. Remaining Scope
-- **Search & Aggregation:** `/v1/search` exists with in-memory data only; real provider connector + normalization/deduplication/pricing and LLM parsing remain to be delivered.
+- **Search & Aggregation:** `/v1/search` remains in-memory; real provider connectors, normalization/deduplication/pricing, and guarded LLM parsing are still pending. `/v1/getTicketGames` now uses a service layer and env-configured OpenAI key but still relies on LLM prompting instead of provider integrations.
 - **User & Favorites:** Authentication provider (JWT/IdP), persistent profile/favorites storage, and personalization logic remain unimplemented; demo token only.
 - **Observability & Ops:** Structured telemetry, Application Insights wiring, and provider monitoring are pending beyond the basic health endpoint.
 - **Performance & Reliability:** Real caching, circuit breakers, rate limiting, and graceful degradation are TBD.
 - **CI/CD & Tooling:** Dockerfile/requirements exist but pipelines, lint/test tooling, and automation have not been created.
+- **LLM workflow:** Ticket finder still LLM+web-search only; lacks provider-backed enrichment and guardrails (rate limiting/retries/observability).
+- **Layering/Repos:** Plan to consolidate LLM prompt/orchestration into a single layer (services or endpoints, not both) and fully standardize on Mongo-backed repositories as the primary store.
 
 ## Upcoming Technical Tasks
 1. Harden FastAPI project structure with config management, dependency injection, and logging/telemetry hooks.

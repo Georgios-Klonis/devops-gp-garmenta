@@ -9,6 +9,7 @@ from app.schemas import ProviderStatus, SearchRequest, SearchResponse, UserConte
 from common.errors import BadRequestError, NotFoundError
 from common.pricing import mark_best_prices
 from common.normalization import normalize_events
+from app.endpoints.get_game_tickets import render_prompt
 
 
 class SearchService:
@@ -52,6 +53,49 @@ class SearchService:
             default=str,
         )
         return f"search:{hashlib.sha1(serialized.encode('utf-8')).hexdigest()}"
+
+
+class TicketFinderService:
+    """LLM-backed ticket search orchestration."""
+
+    def __init__(self, client, model: str, use_websearch: bool = True) -> None:
+        self.client = client
+        self.model = model
+        self.use_websearch = use_websearch
+
+    def find_tickets(
+        self,
+        team_1: str,
+        team_2: str = "",
+        date_from: str | None = None,
+        date_to: str | None = None,
+        price_from: str = "",
+        price_to: str = "",
+        preferred_vendors: str | list[str] | None = None,
+    ) -> str:
+        full_prompt = render_prompt(
+            team_1=team_1,
+            team_2=team_2,
+            date_from=date_from,
+            date_to=date_to,
+            price_from=price_from,
+            price_to=price_to,
+            preferred_vendors=preferred_vendors,
+        )
+
+        if self.use_websearch and hasattr(self.client, "responses"):
+            response = self.client.responses.create(
+                model=self.model,
+                input=full_prompt,
+                tools=[{"type": "web_search_preview_2025_03_11"}],
+            )
+            return response.output_text
+
+        resp = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": full_prompt}],
+        )
+        return resp.choices[0].message.content
 
 
 class ProfileService:

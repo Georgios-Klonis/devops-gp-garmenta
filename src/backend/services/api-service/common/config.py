@@ -32,6 +32,9 @@ class AppSettings(BaseSettings):
     mongodb_db_name: str = Field(default="ticketwise", description="MongoDB database name")
     use_mongo_cache: bool = Field(default=False, description="Use MongoDB-backed search cache")
     use_mongo_profiles: bool = Field(default=False, description="Use MongoDB-backed profiles/favorites store")
+    openai_api_key: Optional[str] = Field(default=None, description="OpenAI API key for ticket finder")
+    openai_model: str = Field(default="gpt-4.1", description="OpenAI model for ticket finder")
+    openai_use_websearch: bool = Field(default=True, description="Enable web search tool for ticket finder")
 
     model_config = SettingsConfigDict(env_prefix="TW_", env_file=".env", extra="ignore")
 

@@ -7,7 +7,6 @@ on:
 env:
   AZURE_WEBAPP_NAME: tickai-app
   AZURE_RESOURCE_GROUP: BCSAI2025-DEVOPS-STUDENT-3A
-  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   REGISTRY: tickaiacr.azurecr.io
   REGISTRY_LOGIN_URL: https://tickaiacr.azurecr.io
   IMAGE_NAME: tickaiacr.azurecr.io/backend
@@ -65,7 +64,7 @@ jobs:
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          creds: ${{ env.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Configure Web App container
         run: |

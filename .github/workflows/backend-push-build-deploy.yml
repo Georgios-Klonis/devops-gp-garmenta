@@ -10,7 +10,7 @@ env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   REGISTRY: tickaiacr.azurecr.io
   REGISTRY_LOGIN_URL: https://tickaiacr.azurecr.io
-  IMAGE_NAME: tickaiacr.azurecr.io/${{ toLower(github.repository) }}/backend
+  IMAGE_NAME: tickaiacr.azurecr.io/backend
 
 jobs:
   build-and-push:

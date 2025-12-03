@@ -18,15 +18,15 @@
 
 ## Architecture Status
 - Layering introduced (API router → service → repository). `/getTicketGames` now flows through a TicketFinderService; OpenAI key is injected via settings/env; prompt builder lives in a dedicated helper.
-- No infrastructure automation or deployment manifests exist; Dockerfile and requirements are stub-level. OpenAI SDK pinned to `>=1.52.0`; chat fallback remains for older clients.
+- Dockerfile plus GitHub Actions workflow build/push the backend container to `tickaiacr` and configure the `tickai-app` Web App to run the commit-tagged container with Cosmos (`tickai-db`) settings injected via env vars (still manual for other services). OpenAI SDK pinned to `>=1.52.0`; chat fallback remains for older clients.
 
 ## Testing & Quality
-- No automated tests or CI pipelines yet; linting/type-check steps are still to be configured. Route/service tests added for search, profile, ticket finder, and Mongo DI selection.
+- GitHub Actions currently builds/pushes/deploys the backend image and sets Cosmos env vars, but does not run linting, typing, or test suites yet. Route/service tests exist for search, profile, ticket finder, and Mongo DI selection, awaiting automation wiring.
 
 ## Current Limitations
 - `/search` data is static and in-memory; `/getTicketGames` relies on an OpenAI prompt rather than provider integrations.
 - Ticket finder lacks provider-backed enrichment and guardrails (rate limiting/retries/observability) around the LLM call.
 - Auth is stub/JWT-only; no external IdP wiring yet.
-- Observability, rate limiting, error budgets, and production-grade CORS/security settings are not configured.
+- Observability, rate limiting, error budgets, production-grade CORS/security settings, and Key Vault/managed identity for secrets are not configured (Cosmos connection currently pulled from GitHub secrets).
 - Risk mitigation strategies (rate limiting, LLM guardrails) remain unimplemented.
 - Layering refinement planned: consolidate LLM logic into one layer (services or endpoints) and move fully to Mongo-backed repositories as the primary store.

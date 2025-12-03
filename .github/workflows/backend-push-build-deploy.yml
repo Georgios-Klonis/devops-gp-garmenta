@@ -6,9 +6,11 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: tickai-app
+  AZURE_RESOURCE_GROUP: BCSAI2025-DEVOPS-STUDENT-3A
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   REGISTRY: tickaiacr.azurecr.io
-  IMAGE_NAME: tickaiacr.azurecr.io/${{ toLower(github.repository) }}/backend:latest
+  REGISTRY_LOGIN_URL: https://tickaiacr.azurecr.io
+  IMAGE_NAME: tickaiacr.azurecr.io/${{ toLower(github.repository) }}/backend
 
 jobs:
   build-and-push:
@@ -25,7 +27,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install backend dependencies
-        working-directory: backend
+        working-directory: src/backend/services/api-service
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
@@ -45,10 +47,12 @@ jobs:
       - name: Build and push backend image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./src/backend/services/api-service
+          file: ./src/backend/services/api-service/Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
   deploy:
     needs: build-and-push
@@ -63,11 +67,34 @@ jobs:
         with:
           creds: ${{ env.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          images: ${{ env.IMAGE_NAME }}
+      - name: Configure Web App container
+        run: |
+          az webapp config container set \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --docker-custom-image-name ${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --docker-registry-server-url ${{ env.REGISTRY_LOGIN_URL }} \
+            --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
+            --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
+
+      - name: Configure backend app settings
+        run: |
+          az webapp config appsettings set \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --settings \
+              TW_ENV=dev \
+              TW_ENABLE_STUB_DATA=false \
+              TW_USE_MONGO_CACHE=true \
+              TW_USE_MONGO_PROFILES=true \
+              TW_MONGODB_DB_NAME=tickai-db \
+              'TW_MONGODB_URI=${{ secrets.COSMOS_CONNECTION_STRING }}'
+
+      - name: Restart Web App
+        run: |
+          az webapp restart \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
 
       - name: Log out from Azure
         run: az logout

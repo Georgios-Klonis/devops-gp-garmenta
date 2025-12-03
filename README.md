@@ -43,6 +43,13 @@ TicketWise – Modular Monolith for sports ticket search.
 ## Tests
 - Run tests from repo root: `python -m pytest tests`
 
+## Deployment (Azure)
+- Container images are built from `src/backend/services/api-service` and pushed to `tickaiacr.azurecr.io/devops-gp-garmenta/backend` on every push to `main` via `.github/workflows/backend-push-build-deploy.yml`.
+- The workflow deploys the freshly built image to the `tickai-app` Azure Web App in resource group `BCSAI2025-DEVOPS-STUDENT-3A`, setting the container image tag to the current commit and restarting the app.
+- Cosmos DB for MongoDB (`tickai-db`) is wired through App Service settings: the workflow updates `TW_MONGODB_URI` (from the `COSMOS_CONNECTION_STRING` GitHub secret), sets `TW_MONGODB_DB_NAME`, and toggles `TW_USE_MONGO_CACHE/TW_USE_MONGO_PROFILES` plus `TW_ENABLE_STUB_DATA=false`.
+- Required GitHub secrets: `AZURE_CREDENTIALS` (service principal JSON), `ACR_USERNAME`, `ACR_PASSWORD`, and `COSMOS_CONNECTION_STRING`. Add environment vars/secrets for other dependencies (e.g., `TW_OPENAI_API_KEY`) as needed.
+- To troubleshoot locally, you can run `az webapp log tail --name tickai-app --resource-group BCSAI2025-DEVOPS-STUDENT-3A` after authenticating with `az login`.
+
 ## Upcoming backend focus
 - Replace stub provider with first real connector + normalization mapping.
 - Enable Mongo-backed cache/profiles in environments with `TW_USE_MONGO_*` toggles; validate collections/indexes.

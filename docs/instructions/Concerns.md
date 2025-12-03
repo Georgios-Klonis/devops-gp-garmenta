@@ -13,6 +13,7 @@
 - Provider APIs may throttle or block scraping, requiring caching, rate-limit backoff, and alternative sources.
 - LLM workflows may hallucinate or mislabel events, causing incorrect normalization and pricing; requires validators and fallback heuristics.
 - LLM and provider usage costs can escalate quickly without budget monitoring or request throttling.
+- Early endpoints rely on permissive CORS and in-memory data; must be replaced with secured auth, persistence, and validated provider connectors before exposure.
 
 ## Performance & Security Issues to Watch
 - LLM latency could push searches beyond 4 seconds if provider fan-out is serialized; concurrency and caching strategy must be proven.

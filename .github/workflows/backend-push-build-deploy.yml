@@ -32,7 +32,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run backend tests with coverage
-        working-directory: src/backend/services/api-service
+        working-directory: src/backend/tests
         run: python -m pytest
 
    #   - name: Upload coverage report

@@ -35,7 +35,7 @@ jobs:
         working-directory: src/backend/services/api-service
         run: python -m pytest
 
-      - name: Upload coverage report
+   #   - name: Upload coverage report
 
       - uses: azure/docker-login@v1
         with:

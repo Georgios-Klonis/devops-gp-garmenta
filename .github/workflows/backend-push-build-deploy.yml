@@ -1,4 +1,4 @@
-name: Build, Push and Deploy Backend Docker Image
+name: Build, Test, Push and Deploy Backend Docker Image
 
 on:
   push:
@@ -31,11 +31,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-  #   - name: Run backend tests with coverage
-  #     working-directory: backend
-  #     run: python -m pytest
+      - name: Run backend tests with coverage
+        working-directory: src/backend/services/api-service
+        run: python -m pytest
 
-  #   - name: Upload coverage report
+      - name: Upload coverage report
 
       - uses: azure/docker-login@v1
         with:
